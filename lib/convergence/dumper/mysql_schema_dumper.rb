@@ -73,6 +73,12 @@ class Convergence::Dumper::MysqlSchemaDumper
         KCU.CONSTRAINT_SCHEMA = S.TABLE_SCHEMA
         AND KCU.TABLE_NAME = S.TABLE_NAME
         AND KCU.CONSTRAINT_NAME = TC.CONSTRAINT_NAME
+        AND (
+            TC.CONSTRAINT_TYPE = 'FOREIGN KEY' AND KCU.REFERENCED_TABLE_NAME IS NOT NULL AND KCU.REFERENCED_COLUMN_NAME IS NOT NULL
+          OR
+            (TC.CONSTRAINT_TYPE IS NULL OR TC.CONSTRAINT_TYPE <> 'FOREIGN KEY') AND KCU.REFERENCED_TABLE_NAME IS NULL AND KCU.REFERENCED_COLUMN_NAME IS NULL
+        )
+
       WHERE
         S.TABLE_SCHEMA = '#{mysql.escape(database_name)}'
 
@@ -90,6 +96,11 @@ class Convergence::Dumper::MysqlSchemaDumper
         KCU.CONSTRAINT_SCHEMA = TC.TABLE_SCHEMA
         AND KCU.TABLE_NAME = TC.TABLE_NAME
         AND KCU.CONSTRAINT_NAME = TC.CONSTRAINT_NAME
+        AND (
+            TC.CONSTRAINT_TYPE = 'FOREIGN KEY' AND KCU.REFERENCED_TABLE_NAME IS NOT NULL AND KCU.REFERENCED_COLUMN_NAME IS NOT NULL
+          OR
+            (TC.CONSTRAINT_TYPE IS NULL OR TC.CONSTRAINT_TYPE <> 'FOREIGN KEY') AND KCU.REFERENCED_TABLE_NAME IS NULL AND KCU.REFERENCED_COLUMN_NAME IS NULL
+        )
       WHERE
         TC.TABLE_SCHEMA = '#{mysql.escape(database_name)}'
         AND NOT EXISTS (
@@ -151,8 +162,7 @@ class Convergence::Dumper::MysqlSchemaDumper
 
   def parse_indexes(table, table_indexes)
     return if table_indexes.nil?
-    table_indexes.group_by { |r| r['INDEX_NAME'] }.each do |index_name, indexes|
-      type = indexes.first['CONSTRAINT_TYPE']
+    table_indexes.group_by { |r| [r['INDEX_NAME'], r['CONSTRAINT_TYPE']] }.each do |(index_name, type), indexes|
       columns = indexes.map { |v| v['COLUMN_NAME'] }
       case type
       when 'PRIMARY KEY'

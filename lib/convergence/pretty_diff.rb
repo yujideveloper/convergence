@@ -14,15 +14,15 @@ class Convergence::PrettyDiff
 
     results = ''
     add_tables.each do |table_name|
-      results += diff_add_table(table_name)
-      results += "\n\n"
+      results << diff_add_table(table_name)
+      results << "\n\n"
     end
     remove_tables.each do |table_name|
-      results += diff_remove_table(table_name)
-      results += "\n\n"
+      results << diff_remove_table(table_name)
+      results << "\n\n"
     end
     change_tables.each do |table_name|
-      results += diff_change_table(table_name)
+      results << diff_change_table(table_name)
     end
     results
   end

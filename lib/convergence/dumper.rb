@@ -8,19 +8,19 @@ class Convergence::Dumper
   def dump_table_dsl(table)
     table_argument = [":#{table.table_name}"]
     table_argument << table.table_options.map { |k, v| key_value_text(k, v) }
-    dsl = "create_table #{table_argument.flatten.join(', ')} do |t|\n"
-    dsl += "  #{table.columns.map { |_, column| dump_column(column) }.join("\n  ")}"
-    dsl += "\n" if !table.indexes.empty? || !table.foreign_keys.empty?
-    dsl += "\n"
+    dsl = "create_table #{table_argument.flatten.join(', ')} do |t|\n".dup
+    dsl << "  #{table.columns.map { |_, column| dump_column(column) }.join("\n  ")}"
+    dsl << "\n" if !table.indexes.empty? || !table.foreign_keys.empty?
+    dsl << "\n"
     unless table.indexes.empty?
-      dsl += "  #{table.indexes.map { |_, index| dump_index(index) }.join("\n  ")}"
-      dsl += "\n"
+      dsl << "  #{table.indexes.map { |_, index| dump_index(index) }.join("\n  ")}"
+      dsl << "\n"
     end
     unless table.foreign_keys.empty?
-      dsl += "  #{table.foreign_keys.map { |_, key| dump_foreign_key(key) }.join("\n  ")}"
-      dsl += "\n"
+      dsl << "  #{table.foreign_keys.map { |_, key| dump_foreign_key(key) }.join("\n  ")}"
+      dsl << "\n"
     end
-    dsl += 'end'
+    dsl << 'end'
     dsl
   end
 

@@ -58,45 +58,45 @@ class SQLGenerator::MysqlGenerator < SQLGenerator
   end
 
   def alter_add_columns_sql(table_name, columns)
-    sql = %(ALTER TABLE `#{table_name}`\n)
-    sql += columns.map { |column| %(  ADD COLUMN #{create_column_sql(column, output_primary_key: true)}) }.join(",\n")
-    sql += ';'
+    sql = %(ALTER TABLE `#{table_name}`\n).dup
+    sql << columns.map { |column| %(  ADD COLUMN #{create_column_sql(column, output_primary_key: true)}) }.join(",\n")
+    sql << ';'
     sql
   end
 
   def alter_remove_columns_sql(table_name, columns)
-    sql = %(ALTER TABLE `#{table_name}`\n)
-    sql += columns.map { |column| %(  DROP COLUMN `#{column.column_name}`) }.join(",\n")
-    sql += ';'
+    sql = %(ALTER TABLE `#{table_name}`\n).dup
+    sql << columns.map { |column| %(  DROP COLUMN `#{column.column_name}`) }.join(",\n")
+    sql << ';'
     sql
   end
 
   def alter_change_column_sql(table_name, column_name, change_column_option, to_table)
     column = to_table[table_name].columns[column_name]
     column.options.merge!(after: change_column_option[:after]) unless change_column_option[:after].nil?
-    sql = ""
+    sql = "".dup
     original_column = original_table[table_name].columns[column_name]
     if original_column.options[:primary_key]
       extra = original_column.options[:extra]
       if extra && extra.upcase.include?('AUTO_INCREMENT')
-        sql += %(ALTER TABLE `#{table_name}` MODIFY COLUMN #{create_column_sql(original_column, output_auto_increment: false)};\n)
+        sql << %(ALTER TABLE `#{table_name}` MODIFY COLUMN #{create_column_sql(original_column, output_auto_increment: false)};\n)
       end
-      sql += %(ALTER TABLE `#{table_name}` DROP PRIMARY KEY;\n)
+      sql << %(ALTER TABLE `#{table_name}` DROP PRIMARY KEY;\n)
     end
-    sql += %(ALTER TABLE `#{table_name}` MODIFY COLUMN #{create_column_sql(column, output_primary_key: true)};)
+    sql << %(ALTER TABLE `#{table_name}` MODIFY COLUMN #{create_column_sql(column, output_primary_key: true)};)
     sql
   end
 
   def alter_change_table_sql(table_name, change_table_option)
-    sql = "ALTER TABLE `#{table_name}`"
+    sql = "ALTER TABLE `#{table_name}`".dup
     change_table_option.each do |key, value|
       if QUOTE_OPTION.include?(key)
-        sql += " #{OPTION_MAPPING[key]}='#{value}'"
+        sql << " #{OPTION_MAPPING[key]}='#{value}'"
       else
-        sql += " #{OPTION_MAPPING[key]}=#{value}"
+        sql << " #{OPTION_MAPPING[key]}=#{value}"
       end
     end
-    sql += ';'
+    sql << ';'
     sql
   end
 
@@ -105,31 +105,31 @@ class SQLGenerator::MysqlGenerator < SQLGenerator
   end
 
   def alter_add_index_sql(table_name, index)
-    sql = 'CREATE'
-    sql += ' UNIQUE' if index.options[:unique]
-    sql += " INDEX `#{index.index_name}` ON `#{table_name}`(#{index.quoted_columns.join(',')});"
+    sql = 'CREATE'.dup
+    sql << ' UNIQUE' if index.options[:unique]
+    sql << " INDEX `#{index.index_name}` ON `#{table_name}`(#{index.quoted_columns.join(',')});"
     sql
   end
 
   def alter_remove_foreign_keys_sql(table_name, index_names)
-    sql = %(ALTER TABLE `#{table_name}`\n)
-    sql += index_names.map { |index_name| %(  DROP FOREIGN KEY `#{index_name}`) }.join(",\n")
-    sql += ';'
-    sql += index_names.map { |index_name| alter_remove_index_sql(table_name, index_name) }.join("\n")
+    sql = %(ALTER TABLE `#{table_name}`\n).dup
+    sql << index_names.map { |index_name| %(  DROP FOREIGN KEY `#{index_name}`) }.join(",\n")
+    sql << ';'
+    sql << index_names.map { |index_name| alter_remove_index_sql(table_name, index_name) }.join("\n")
     sql
   end
 
   def alter_add_foreign_keys_sql(table_name, foreign_keys)
-    sql = %(ALTER TABLE `#{table_name}`\n)
-    sql += foreign_keys.map { |foreign_key| alter_add_foreign_key_sql(foreign_key) }.join(",\n")
-    sql += ';'
+    sql = %(ALTER TABLE `#{table_name}`\n).dup
+    sql << foreign_keys.map { |foreign_key| alter_add_foreign_key_sql(foreign_key) }.join(",\n")
+    sql << ';'
     sql
   end
 
   def alter_add_foreign_key_sql(foreign_key)
-    sql = %(  ADD CONSTRAINT `#{foreign_key.key_name}` FOREIGN KEY )
-    sql += "(#{[foreign_key.from_columns].join(',')}) REFERENCES `#{foreign_key.to_table}`"
-    sql += "(#{[foreign_key.to_columns].join(',')})"
+    sql = %(  ADD CONSTRAINT `#{foreign_key.key_name}` FOREIGN KEY ).dup
+    sql << "(#{[foreign_key.from_columns].join(',')}) REFERENCES `#{foreign_key.to_table}`"
+    sql << "(#{[foreign_key.to_columns].join(',')})"
     sql
   end
 
@@ -162,47 +162,47 @@ DROP TABLE `#{table_name}`;
   end
 
   def create_column_sql(column, output_primary_key: false, output_auto_increment: true)
-    sql = "`#{column.column_name}`"
-    sql += " #{column.type}"
-    sql += "(#{column.options[:limit]})" unless column.options[:limit].nil?
+    sql = "`#{column.column_name}`".dup
+    sql << " #{column.type}"
+    sql << "(#{column.options[:limit]})" unless column.options[:limit].nil?
     if column.options[:precision] && column.options[:scale]
-      sql += "(#{column.options[:precision]}, #{column.options[:scale]})"
+      sql << "(#{column.options[:precision]}, #{column.options[:scale]})"
     end
     if column.options[:unsigned]
-      sql += ' UNSIGNED'
+      sql << ' UNSIGNED'
     end
     if column.options[:character_set]
-      sql += " CHARACTER SET #{column.options[:character_set]}"
+      sql << " CHARACTER SET #{column.options[:character_set]}"
     end
     if column.options[:collate]
-      sql += " COLLATE #{column.options[:collate]}"
+      sql << " COLLATE #{column.options[:collate]}"
     end
     if column.options[:null]
-      sql += ' DEFAULT NULL' unless column.options[:default]
+      sql << ' DEFAULT NULL' unless column.options[:default]
     else
-      sql += ' NOT NULL'
+      sql << ' NOT NULL'
     end
     if column.options[:primary_key] && output_primary_key
-      sql += ' PRIMARY KEY'
+      sql << ' PRIMARY KEY'
     end
     if column.options[:default]
-      sql += " DEFAULT '#{column.options[:default]}'"
+      sql << " DEFAULT '#{column.options[:default]}'"
     end
     if column.options[:comment]
-      sql += " COMMENT '#{column.options[:comment]}'"
+      sql << " COMMENT '#{column.options[:comment]}'"
     end
     if column.options[:extra]
       if output_auto_increment
-        sql += " #{column.options[:extra].upcase}"
+        sql << " #{column.options[:extra].upcase}"
       else
-        sql += " #{column.options[:extra].upcase.sub('AUTO_INCREMENT', '')}"
+        sql << " #{column.options[:extra].upcase.sub('AUTO_INCREMENT', '')}"
       end
     end
     if column.options.keys.include?(:after)
       if column.options[:after].nil?
-        sql += ' FIRST'
+        sql << ' FIRST'
       else
-        sql += " AFTER `#{column.options[:after]}`"
+        sql << " AFTER `#{column.options[:after]}`"
       end
     end
     sql
@@ -224,9 +224,9 @@ DROP TABLE `#{table_name}`;
       %(KEY `#{ik.index_name}` (#{ik.quoted_columns.join(',')}))
     end
     results << foreign_keys.map do |fk|
-      sql = %(CONSTRAINT `#{fk.key_name}` FOREIGN KEY)
-      sql += %( (#{[fk.from_columns].flatten.map { |v| "`#{v}`" }.join(',')}))
-      sql += %( REFERENCES `#{fk.to_table}` (#{[fk.to_columns].flatten.map { |v| "`#{v}`" }.join(',')}))
+      sql = %(CONSTRAINT `#{fk.key_name}` FOREIGN KEY).dup
+      sql << %( (#{[fk.from_columns].flatten.map { |v| "`#{v}`" }.join(',')}))
+      sql << %( REFERENCES `#{fk.to_table}` (#{[fk.to_columns].flatten.map { |v| "`#{v}`" }.join(',')}))
       sql
     end
     results

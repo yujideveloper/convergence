@@ -15,7 +15,7 @@ class Convergence::Index
   end
 
   def quoted_columns
-    option_strings = Hash[@index_columns.map { |name| [name, ''] }]
+    option_strings = Hash[@index_columns.map { |name| [name, ''.dup] }]
     option_strings = add_index_length(option_strings, @index_columns, @options)
     @index_columns.map { |name| quote_column_name(name) + option_strings[name] }
   end
@@ -28,7 +28,7 @@ class Convergence::Index
 
   def add_index_length(option_strings, column_names, options = {})
     if length = options[:length]
-      column_names.each { |name| option_strings[name] += "(#{length[name]})" if length.has_key?(name) && !length[name].nil? }
+      column_names.each { |name| option_strings[name] << "(#{length[name]})" if length.has_key?(name) && !length[name].nil? }
     end
     option_strings
   end

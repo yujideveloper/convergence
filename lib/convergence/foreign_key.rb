@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Convergence::ForeignKey
   attr_accessor :key_name, :from_columns, :to_table, :to_columns, :options
 

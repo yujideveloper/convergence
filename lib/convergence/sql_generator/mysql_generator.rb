@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class SQLGenerator::MysqlGenerator < SQLGenerator
   OPTION_MAPPING = {
     engine: 'ENGINE',

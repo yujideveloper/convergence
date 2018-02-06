@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Convergence::DSL
   attr_accessor :tables, :current_dir_path
 

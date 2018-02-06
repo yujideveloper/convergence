@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'mysql2'
 class Convergence::DatabaseConnector::MysqlConnector
   attr_reader :config

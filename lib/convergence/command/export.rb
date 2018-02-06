@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Convergence::Command::Export < Convergence::Command
   def validate!
     if @config.nil?

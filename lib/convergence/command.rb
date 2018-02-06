@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Convergence::Command
   def initialize(opts, config: nil)
     @opts = opts

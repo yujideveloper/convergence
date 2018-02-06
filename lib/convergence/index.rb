@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Convergence::Index
   attr_accessor :index_name, :index_columns, :options
 

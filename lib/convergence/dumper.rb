@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Convergence::Dumper
   def dump_dsl(tables)
     tables.map do |_, table|

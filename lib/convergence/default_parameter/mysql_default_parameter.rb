@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Convergence::DefaultParameter::MysqlDefaultParameter
   DEFAULT_TABLE_PARAMETERS = {
     engine: 'InnoDB',

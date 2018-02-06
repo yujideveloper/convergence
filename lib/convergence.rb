@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'convergence/module'
 require 'convergence/logger'
 require 'convergence/version'

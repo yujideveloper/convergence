@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Convergence::Command::Diff < Convergence::Command
   def validate!
     unless @opts[:diff].size == 2

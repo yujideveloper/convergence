@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'pathname'
 class Convergence::Command::Dryrun < Convergence::Command
   def validate!

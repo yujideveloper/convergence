@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Convergence::Dumper::MysqlSchemaDumper
   def initialize(connector)
     @connector = connector

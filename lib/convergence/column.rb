@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Convergence::Column
   attr_accessor :type, :column_name, :options
 

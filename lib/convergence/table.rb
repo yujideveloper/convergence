@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Convergence::Table
   attr_accessor :table_name, :table_options, :columns, :indexes, :foreign_keys
 

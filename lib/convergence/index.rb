@@ -5,6 +5,7 @@ class Convergence::Index
     @index_name = index_name
     @index_columns = [index_columns].flatten.map(&:to_s)
     @options = { name: @index_name }.merge(options)
+    @options[:name] = @options[:name].to_s
     length = @options[:length]
     case length
     when Hash

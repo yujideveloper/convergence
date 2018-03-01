@@ -7,5 +7,6 @@ class Convergence::ForeignKey
     @to_table = to_table.to_s
     @to_columns = [to_columns].flatten.map(&:to_s)
     @options = { name: @key_name }.merge(options)
+    @options[:name] = @options[:name].to_s
   end
 end

@@ -23,6 +23,7 @@ class Convergence::Table
   def index(index_columns, options = {})
     index_name = options[:name]
     index_name = "index_#{table_name}_on_#{[index_columns].flatten.join('_')}" if index_name.nil?
+    index_name = index_name.to_s
     @indexes[index_name] = Convergence::Index.new(index_name, index_columns, options)
   end
 
@@ -32,6 +33,7 @@ class Convergence::Table
     end
     key_name = options[:name]
     key_name = "#{table_name}_#{[key_columns].flatten.join('_')}_fk" if key_name.nil?
+    key_name = key_name.to_s
     @foreign_keys[key_name] = Convergence::ForeignKey.new(
       key_name,
       key_columns,
